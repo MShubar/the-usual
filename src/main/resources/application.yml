@@ -31,19 +31,25 @@ azure:
 
 server:
   port: ${PORT:8080}
+  error:
+    include-message: always
+    include-binding-errors: always
 
 logging:
   level:
+    root: INFO
     com.theusual: DEBUG
     org.springframework.web: DEBUG
+    org.springframework.boot: INFO
   pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%level] %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%level] %logger{36} - %msg%n"
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: "*"
   endpoint:
     health:
       show-details: always
