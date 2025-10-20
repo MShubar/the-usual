@@ -100,11 +100,10 @@
                 <version>2.5.0</version>
                 <configuration>
                     <schemaVersion>v2</schemaVersion>
-                    <subscriptionId>${AZURE_SUBSCRIPTION_ID}</subscriptionId>
-                    <resourceGroup>${AZURE_RESOURCE_GROUP}</resourceGroup>
-                    <appName>${AZURE_APP_NAME}</appName>
+                    <resourceGroup>your-resource-group-name</resourceGroup>
+                    <appName>the-usual-backend-gnavf2dkdebghhh3</appName>
                     <pricingTier>F1</pricingTier>
-                    <region>eastus</region>
+                    <region>canadacentral</region>
                     <runtime>
                         <os>Linux</os>
                         <javaVersion>Java 17</javaVersion>
