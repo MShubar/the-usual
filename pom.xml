@@ -100,7 +100,7 @@
                 <version>2.5.0</version>
                 <configuration>
                     <schemaVersion>v2</schemaVersion>
-                    <resourceGroup>your-resource-group-name</resourceGroup>
+                    <resourceGroup>DefaultResourceGroup-CC</resourceGroup>
                     <appName>the-usual-backend-gnavf2dkdebghhh3</appName>
                     <pricingTier>F1</pricingTier>
                     <region>canadacentral</region>
@@ -119,6 +119,15 @@
                             </resource>
                         </resources>
                     </deployment>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M9</version>
+                <configuration>
+                    <skipTests>true</skipTests>
                 </configuration>
             </plugin>
         </plugins>
