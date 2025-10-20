@@ -101,7 +101,7 @@
                 <configuration>
                     <schemaVersion>v2</schemaVersion>
                     <resourceGroup>DefaultResourceGroup-CC</resourceGroup>
-                    <appName>the-usual-backend-gnavf2dkdebghhh3</appName>
+                    <appName>the-usual-backend</appName>
                     <pricingTier>F1</pricingTier>
                     <region>canadacentral</region>
                     <runtime>
