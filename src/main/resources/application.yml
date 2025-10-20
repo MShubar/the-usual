@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://mysalon.postgres.database.azure.com:5432/coffee-shop
+    username: MySalon
+    password: MRkiller.26
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  web:
+    cors:
+      allowed-origins: "http://localhost:5173"
+      allowed-methods: "GET,POST,PUT,DELETE"
+      allowed-headers: "*"
+      allow-credentials: true
+
+
+app:
+  client-origin: ${CLIENT_ORIGIN:http://localhost:5173}
+
+azure:
+  storage:
+    account-name: ${AZURE_STORAGE_ACCOUNT_NAME:}
+    account-key: ${AZURE_STORAGE_ACCOUNT_KEY:}
+    container-name: ${AZURE_STORAGE_CONTAINER_NAME:images}
