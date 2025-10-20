@@ -11,7 +11,7 @@ import java.io.IOException;
 @Service
 public class AzureStorageService {
 
-    @Value("${app.azure.connection-string}")
+    @Value("${AZURE_STORAGE_CONNECTION_STRING:${app.azure.connection-string:}}")
     private String connectionString;
 
     @Value("${app.azure.container}")
