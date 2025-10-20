@@ -28,3 +28,22 @@ azure:
     account-name: ${AZURE_STORAGE_ACCOUNT_NAME:default-account}
     account-key: ${AZURE_STORAGE_ACCOUNT_KEY:default-key}
     container-name: ${AZURE_STORAGE_CONTAINER_NAME:images}
+
+server:
+  port: ${PORT:8080}
+
+logging:
+  level:
+    com.theusual: DEBUG
+    org.springframework.web: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
