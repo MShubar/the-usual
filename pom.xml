@@ -100,15 +100,10 @@
                 <version>2.5.0</version>
                 <configuration>
                     <schemaVersion>v2</schemaVersion>
+                    <subscriptionId>8e55a54d-bb45-43e0-8df6-b83925abc288</subscriptionId>
                     <resourceGroup>DefaultResourceGroup-CC</resourceGroup>
                     <appName>the-usual-backend</appName>
-                    <pricingTier>F1</pricingTier>
-                    <region>canadacentral</region>
-                    <runtime>
-                        <os>Linux</os>
-                        <javaVersion>Java 17</javaVersion>
-                        <webContainer>Java SE</webContainer>
-                    </runtime>
+                    <skipCreateWebApp>true</skipCreateWebApp>
                     <deployment>
                         <resources>
                             <resource>
