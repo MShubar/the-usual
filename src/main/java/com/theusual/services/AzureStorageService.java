@@ -11,10 +11,10 @@ import java.io.IOException;
 @Service
 public class AzureStorageService {
 
-    @Value("${AZURE_STORAGE_CONNECTION_STRING:${app.azure.connection-string:}}")
+    @Value("${AZURE_STORAGE_CONNECTION_STRING:}")
     private String connectionString;
 
-    @Value("${app.azure.container}")
+    @Value("${AZURE_STORAGE_CONTAINER_NAME:salons}")
     private String containerName;
 
     public String uploadFile(MultipartFile file) throws IOException {
