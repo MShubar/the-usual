@@ -19,6 +19,8 @@ public class CorsFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
+        System.out.println("CORS Filter applied for: " + httpRequest.getRequestURI());
+        
         httpResponse.setHeader("Access-Control-Allow-Origin", "https://witty-grass-0ce71830f.1.azurestaticapps.net");
         httpResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         httpResponse.setHeader("Access-Control-Allow-Headers", "*");
