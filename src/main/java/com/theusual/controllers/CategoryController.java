@@ -27,23 +27,23 @@ public class CategoryController {
     private final ProductRepository itemRepository;
 
     @GetMapping
-    @Transactional(readOnly = true)
-    public ResponseEntity<?> list() {
-        try {
-            return ResponseEntity.ok(categoryService.listAll());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of("error", e.getMessage()));
-        }
+    public ResponseEntity<List<Category>> getAllCategories() {
+        long startTime = System.currentTimeMillis();
+        List<Category> categories = categoryService.getAllCategories();
+        long duration = System.currentTimeMillis() - startTime;
+        System.out.println("GET /categories took " + duration + "ms");
+        return ResponseEntity.ok(categories);
     }
 
     @GetMapping("/{idOrName}/sub")
     @Transactional(readOnly = true)
     public ResponseEntity<?> getSubCategoriesByIdOrName(@PathVariable String idOrName) {
+        long startTime = System.currentTimeMillis();
         try {
             // Try to parse as Long first (ID)
             try {
                 Long id = Long.parseLong(idOrName);
-                List<Subcategory> subs = categoryService.getSubCategories(id);
+                List<Subcategory> subs = categoryService.getSubCategories(id); // Use cached service method
                 return ResponseEntity.ok(subs);
             } catch (NumberFormatException e) {
                 // If not a number, treat as category name
@@ -51,10 +51,15 @@ public class CategoryController {
                 if (categoryOpt.isEmpty()) {
                     return ResponseEntity.notFound().build();
                 }
-                return ResponseEntity.ok(categoryOpt.get().getSubcategories());
+                // Use cached service method with category ID
+                List<Subcategory> subs = categoryService.getSubCategories(categoryOpt.get().getId());
+                return ResponseEntity.ok(subs);
             }
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(Map.of("error", e.getMessage()));
+        } finally {
+            long duration = System.currentTimeMillis() - startTime;
+            System.out.println("GET /categories/" + idOrName + "/sub took " + duration + "ms");
         }
     }
 
@@ -86,70 +91,77 @@ public class CategoryController {
     public ResponseEntity<List<ProductResponseDTO>> getItemsBySubCategory(
             @PathVariable String categoryIdOrName,
             @PathVariable String subName) {
-
-        Optional<Category> categoryOpt;
-
-        // Try to parse as Long first (ID)
+        long startTime = System.currentTimeMillis();
         try {
-            Long categoryId = Long.parseLong(categoryIdOrName);
-            categoryOpt = categoryRepository.findById(categoryId);
-        } catch (NumberFormatException e) {
-            // If not a number, treat as category name
-            categoryOpt = categoryRepository.findByNameIgnoreCase(categoryIdOrName);
+            Optional<Category> categoryOpt;
+
+            // Try to parse as Long first (ID)
+            try {
+                Long categoryId = Long.parseLong(categoryIdOrName);
+                categoryOpt = categoryRepository.findById(categoryId);
+            } catch (NumberFormatException e) {
+                categoryOpt = categoryRepository.findByNameIgnoreCase(categoryIdOrName);
+            }
+
+            if (categoryOpt.isEmpty()) return ResponseEntity.notFound().build();
+
+            Optional<Subcategory> subOpt = categoryOpt.get().getSubcategories()
+                    .stream()
+                    .filter(sub -> sub.getName().equalsIgnoreCase(subName))
+                    .findFirst();
+
+            if (subOpt.isEmpty()) return ResponseEntity.notFound().build();
+
+            // Use cached service method
+            List<Product> items = categoryService.getItemsBySubcategoryId(subOpt.get().getId());
+
+            // Map to DTO (this is fast, no external calls)
+            long mappingStart = System.currentTimeMillis();
+            List<ProductResponseDTO> response = items.stream().map(product -> {
+                ProductResponseDTO dto = new ProductResponseDTO();
+                dto.setId(product.getId());
+                dto.setName(product.getName());
+                dto.setDescription(product.getDescription());
+                dto.setPrice(product.getPrice());
+                dto.setImage(product.getImage());
+
+                dto.setSizes(parseOptionString(product.getSizes()).stream().map(s -> {
+                    ProductResponseDTO.OptionDTO opt = new ProductResponseDTO.OptionDTO();
+                    opt.setKey(s.toUpperCase().replace(" ", "_"));
+                    opt.setValue(s);
+                    return opt;
+                }).collect(Collectors.toList()));
+
+                dto.setMilks(parseOptionString(product.getMilks()).stream().map(m -> {
+                    ProductResponseDTO.OptionDTO opt = new ProductResponseDTO.OptionDTO();
+                    opt.setKey(m.toUpperCase().replace(" ", "_"));
+                    opt.setValue(m);
+                    return opt;
+                }).collect(Collectors.toList()));
+
+                dto.setShots(parseOptionString(product.getShots()).stream().map(sh -> {
+                    ProductResponseDTO.OptionDTO opt = new ProductResponseDTO.OptionDTO();
+                    opt.setKey(sh.toUpperCase().replace(" ", "_"));
+                    opt.setValue(sh);
+                    return opt;
+                }).collect(Collectors.toList()));
+
+                dto.setMixers(parseOptionString(product.getMixers()).stream().map(mx -> {
+                    ProductResponseDTO.OptionDTO opt = new ProductResponseDTO.OptionDTO();
+                    opt.setKey(mx.toUpperCase().replace(" ", "_"));
+                    opt.setValue(mx);
+                    return opt;
+                }).collect(Collectors.toList()));
+
+                return dto;
+            }).collect(Collectors.toList());
+            System.out.println("DTO mapping took " + (System.currentTimeMillis() - mappingStart) + "ms");
+
+            return ResponseEntity.ok(response);
+        } finally {
+            long duration = System.currentTimeMillis() - startTime;
+            System.out.println("GET /categories/" + categoryIdOrName + "/" + subName + "/items took " + duration + "ms");
         }
-
-        if (categoryOpt.isEmpty()) return ResponseEntity.notFound().build();
-
-        Optional<Subcategory> subOpt = categoryOpt.get().getSubcategories()
-                .stream()
-                .filter(sub -> sub.getName().equalsIgnoreCase(subName))
-                .findFirst();
-
-        if (subOpt.isEmpty()) return ResponseEntity.notFound().build();
-
-        List<Product> items = itemRepository.findBySubcategory_Id(subOpt.get().getId());
-
-        // ...existing code...
-        List<ProductResponseDTO> response = items.stream().map(product -> {
-            ProductResponseDTO dto = new ProductResponseDTO();
-            dto.setId(product.getId());
-            dto.setName(product.getName());
-            dto.setDescription(product.getDescription());
-            dto.setPrice(product.getPrice());
-            dto.setImage(product.getImage());
-
-            dto.setSizes(parseOptionString(product.getSizes()).stream().map(s -> {
-                ProductResponseDTO.OptionDTO opt = new ProductResponseDTO.OptionDTO();
-                opt.setKey(s.toUpperCase().replace(" ", "_"));
-                opt.setValue(s);
-                return opt;
-            }).collect(Collectors.toList()));
-
-            dto.setMilks(parseOptionString(product.getMilks()).stream().map(m -> {
-                ProductResponseDTO.OptionDTO opt = new ProductResponseDTO.OptionDTO();
-                opt.setKey(m.toUpperCase().replace(" ", "_"));
-                opt.setValue(m);
-                return opt;
-            }).collect(Collectors.toList()));
-
-            dto.setShots(parseOptionString(product.getShots()).stream().map(sh -> {
-                ProductResponseDTO.OptionDTO opt = new ProductResponseDTO.OptionDTO();
-                opt.setKey(sh.toUpperCase().replace(" ", "_"));
-                opt.setValue(sh);
-                return opt;
-            }).collect(Collectors.toList()));
-
-            dto.setMixers(parseOptionString(product.getMixers()).stream().map(mx -> {
-                ProductResponseDTO.OptionDTO opt = new ProductResponseDTO.OptionDTO();
-                opt.setKey(mx.toUpperCase().replace(" ", "_"));
-                opt.setValue(mx);
-                return opt;
-            }).collect(Collectors.toList()));
-
-            return dto;
-        }).collect(Collectors.toList());
-
-        return ResponseEntity.ok(response);
     }
 
 

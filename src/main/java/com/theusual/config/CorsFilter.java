@@ -1,5 +1,6 @@
 package com.theusual.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,9 @@ import java.io.IOException;
 @Order(1)
 public class CorsFilter implements Filter {
 
+    @Value("${CLIENT_ORIGIN:https://witty-grass-0ce71830f.1.azurestaticapps.net}")
+    private String clientOrigin;
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
@@ -21,7 +25,7 @@ public class CorsFilter implements Filter {
 
         System.out.println("CORS Filter applied for: " + httpRequest.getRequestURI());
         
-        httpResponse.setHeader("Access-Control-Allow-Origin", "https://witty-grass-0ce71830f.1.azurestaticapps.net");
+        httpResponse.setHeader("Access-Control-Allow-Origin", clientOrigin);
         httpResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         httpResponse.setHeader("Access-Control-Allow-Headers", "*");
         httpResponse.setHeader("Access-Control-Allow-Credentials", "true");

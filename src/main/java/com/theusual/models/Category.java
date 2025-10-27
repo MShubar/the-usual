@@ -1,5 +1,6 @@
 package com.theusual.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Entity
 @Data
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "subcategories"}) // Don't load subcategories for /categories
 @Table(name = "categories")
 @AllArgsConstructor
 @NoArgsConstructor
