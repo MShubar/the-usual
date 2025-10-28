@@ -14,14 +14,14 @@ spring:
       enabled: ${H2_CONSOLE_ENABLED:false}
   web:
     cors:
-      allowed-origins: "${CLIENT_ORIGIN:https://witty-grass-0ce71830f.1.azurestaticapps.net}"
+      allowed-origins: "${CLIENT_ORIGIN}"
       allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
       allowed-headers: "*"
       allow-credentials: true
 
 
 app:
-  client-origin: ${CLIENT_ORIGIN:https://witty-grass-0ce71830f.1.azurestaticapps.net}
+  client-origin: ${CLIENT_ORIGIN}
 
 azure:
   storage:

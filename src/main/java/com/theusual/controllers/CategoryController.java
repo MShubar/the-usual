@@ -5,7 +5,6 @@ import com.theusual.models.Category;
 import com.theusual.models.Product;
 import com.theusual.models.Subcategory;
 import com.theusual.repositories.CategoryRepository;
-import com.theusual.repositories.ProductRepository;
 import com.theusual.services.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +23,6 @@ public class CategoryController {
 
     private final CategoryService categoryService;
     private final CategoryRepository categoryRepository;
-    private final ProductRepository itemRepository;
 
     @GetMapping
     public ResponseEntity<List<Category>> getAllCategories() {

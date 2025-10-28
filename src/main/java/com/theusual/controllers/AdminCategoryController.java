@@ -2,7 +2,6 @@ package com.theusual.controllers;
 
 import com.theusual.models.Category;
 import com.theusual.services.CategoryService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,7 +10,6 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/admin/categories")
-@CrossOrigin(origins = "${app.client-origin}")
 public class AdminCategoryController {
     private final CategoryService categoryService;
 

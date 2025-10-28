@@ -6,7 +6,6 @@ import com.theusual.models.Product;
 import com.theusual.repositories.CategoryRepository;
 import com.theusual.repositories.SubCategoryRepository;
 import com.theusual.repositories.ProductRepository;
-import com.theusual.services.AzureStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;

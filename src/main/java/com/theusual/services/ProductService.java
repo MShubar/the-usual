@@ -6,13 +6,11 @@ import com.theusual.models.Subcategory;
 import com.theusual.repositories.CategoryRepository;
 import com.theusual.repositories.ProductRepository;
 import com.theusual.repositories.SubCategoryRepository;
-import com.theusual.services.AzureStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,7 +20,6 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final SubCategoryRepository subCategoryRepository;
     private final AzureStorageService azureStorageService;
-    private final CategoryRepository categoryRepository;
 
 
     public List<Product> listAll() {

@@ -17,7 +17,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/orders")
-@CrossOrigin(origins = "${CLIENT_ORIGIN:https://witty-grass-0ce71830f.1.azurestaticapps.net}")
 @RequiredArgsConstructor
 public class OrderController {
 
