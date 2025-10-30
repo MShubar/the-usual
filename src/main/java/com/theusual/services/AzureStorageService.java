@@ -14,7 +14,7 @@ public class AzureStorageService {
     @Value("${AZURE_STORAGE_CONNECTION_STRING:}")
     private String connectionString;
 
-    @Value("${AZURE_STORAGE_CONTAINER_NAME:salons}")
+    @Value("${AZURE_STORAGE_CONTAINER_NAME:coffee-shop}")
     private String containerName;
 
     public String uploadFile(MultipartFile file) throws IOException {

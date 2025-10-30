@@ -48,4 +48,24 @@ public class OrderService {
     public List<Order> getOrdersByUserId(String userId) {
         return orderRepository.findByUserId(userId);
     }
+
+    public Order cancelOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+            .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));
+        
+        String currentStatus = order.getStatus().toLowerCase();
+        
+        // Only allow cancellation if order is pending or preparing
+        if (!"pending".equals(currentStatus) && !"preparing".equals(currentStatus)) {
+            throw new IllegalStateException(
+                "Cannot cancel order with status: " + order.getStatus() + 
+                ". Only pending or preparing orders can be cancelled."
+            );
+        }
+        
+        order.setStatus("cancelled");
+        order.setUpdatedAt(java.time.LocalDateTime.now());
+        
+        return orderRepository.save(order);
+    }
 }

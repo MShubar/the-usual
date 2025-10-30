@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/orders")
@@ -32,5 +34,26 @@ public class OrderController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Order>> getUserOrders(@PathVariable String userId) {
         return ResponseEntity.ok(orderService.getOrdersByUserId(userId));
+    }
+
+    @PutMapping("/{id}/cancel")
+    public ResponseEntity<Map<String, Object>> cancelOrder(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            Order cancelledOrder = orderService.cancelOrder(id);
+            response.put("success", true);
+            response.put("message", "Order cancelled successfully");
+            response.put("order", cancelledOrder);
+            return ResponseEntity.ok(response);
+        } catch (IllegalStateException e) {
+            response.put("success", false);
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("error", "Order not found or could not be cancelled");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
     }
 }
