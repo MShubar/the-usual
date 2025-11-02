@@ -8,6 +8,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,9 +32,13 @@ public class Order {
 
     private String userId;
 
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "jsonb")
-    private List<Map<String, Object>> items;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+        name = "order_items", 
+        joinColumns = @JoinColumn(name = "order_id")
+    )
+    @OrderColumn(name = "items_order")
+    private List<OrderItem> items = new ArrayList<>();
 
     private String status;
     private LocalDateTime createdAt;

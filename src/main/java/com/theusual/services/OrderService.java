@@ -1,12 +1,13 @@
 package com.theusual.services;
 
 import com.theusual.models.Order;
+import com.theusual.models.OrderItem;
 import com.theusual.dto.OrderRequest;
 import com.theusual.repositories.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -15,57 +16,50 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
 
-    public Order createOrder(OrderRequest request) {
+    public Order createOrder(OrderRequest orderRequest) {
         Order order = new Order();
-        order.setOrderType(request.getOrderType());
-        order.setTotal(request.getTotal());
-        order.setPaymentMethod(request.getPaymentMethod());
-        order.setDeliveryAddress(request.getDeliveryAddress());
-        order.setUserId(request.getUserId());
+        order.setOrderType(orderRequest.getOrderType());
+        order.setTotal(orderRequest.getTotal());
+        order.setPaymentMethod(orderRequest.getPaymentMethod());
+        order.setDeliveryAddress(orderRequest.getDeliveryAddress());
+        order.setUserId(orderRequest.getUserId());
         
-        // Convert items to Map format for JSON storage
-        List<Map<String, Object>> items = request.getItems().stream()
-            .map(item -> {
-                Map<String, Object> itemMap = new HashMap<>();
-                itemMap.put("id", item.getId());
-                itemMap.put("quantity", item.getQuantity());
-                itemMap.put("price", item.getPrice());
-                itemMap.put("customizations", item.getCustomizations());
-                return itemMap;
+        // Map items from DTO to OrderItem entities
+        List<OrderItem> orderItems = orderRequest.getItems().stream()
+            .map(itemDTO -> {
+                OrderItem item = new OrderItem();
+                item.setItemId(itemDTO.getId());
+                item.setName(itemDTO.getName());
+                item.setImage(itemDTO.getImage());
+                item.setDescription(itemDTO.getDescription());
+                item.setQuantity(itemDTO.getQuantity());
+                item.setPrice(itemDTO.getPrice());
+                item.setCustomizations(itemDTO.getCustomizations());
+                return item;
             })
             .collect(Collectors.toList());
         
-        order.setItems(items);
-        
+        order.setItems(orderItems);
         return orderRepository.save(order);
     }
 
     public Order getOrderById(Long id) {
         return orderRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
     }
 
     public List<Order> getOrdersByUserId(String userId) {
         return orderRepository.findByUserId(userId);
     }
 
-    public Order cancelOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId)
-            .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));
+    public Order cancelOrder(Long id) {
+        Order order = getOrderById(id);
         
-        String currentStatus = order.getStatus().toLowerCase();
-        
-        // Only allow cancellation if order is pending or preparing
-        if (!"pending".equals(currentStatus) && !"preparing".equals(currentStatus)) {
-            throw new IllegalStateException(
-                "Cannot cancel order with status: " + order.getStatus() + 
-                ". Only pending or preparing orders can be cancelled."
-            );
+        if (!"pending".equalsIgnoreCase(order.getStatus())) {
+            throw new IllegalStateException("Only pending orders can be cancelled");
         }
         
         order.setStatus("cancelled");
-        order.setUpdatedAt(java.time.LocalDateTime.now());
-        
         return orderRepository.save(order);
     }
 }

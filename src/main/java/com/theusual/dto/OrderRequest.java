@@ -16,8 +16,11 @@ public class OrderRequest {
     @Data
     public static class OrderItemDTO {
         private Long id;
+        private String name;
+        private String image;
+        private String description;
         private Integer quantity;
         private Double price;
-        private Map<String, String> customizations;
+        private Map<String, Object> customizations;
     }
 }

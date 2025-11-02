@@ -1,35 +1,40 @@
 package com.theusual.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
-@Entity
-@Table(name = "order_items")
+import java.io.Serializable;
+import java.util.Map;
+
+@Embeddable
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderItem {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", nullable = false)
-    @JsonIgnore
-    private Order order;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
-
-    @Column(nullable = false)
+public class OrderItem implements Serializable {
+    
+    @Column(name = "item_id")
+    private Long itemId;
+    
+    @Column(name = "name")
+    private String name;
+    
+    @Column(name = "image")
+    private String image;
+    
+    @Column(name = "description")
+    private String description;
+    
+    @Column(name = "quantity")
     private Integer quantity;
-
-    @Column(nullable = false)
+    
+    @Column(name = "price")
     private Double price;
-
-    private String customizations; // JSON string for size, milk, shots, etc.
+    
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "customizations", columnDefinition = "jsonb")
+    private Map<String, Object> customizations; // JSON string for size, milk, shots, etc.
 }
