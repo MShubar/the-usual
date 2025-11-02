@@ -6,9 +6,9 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class WebConfig implements WebMvcConfigurer {
+public class CorsConfig implements WebMvcConfigurer {
 
-    @Value("${CLIENT_ORIGIN:http://localhost:5173}")
+    @Value("${app.client-origin:http://localhost:5173}")
     private String clientOrigin;
 
     @Override
@@ -21,4 +21,3 @@ public class WebConfig implements WebMvcConfigurer {
                 .maxAge(3600);
     }
 }
-

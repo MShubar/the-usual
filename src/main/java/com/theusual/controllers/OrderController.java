@@ -15,7 +15,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/orders")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "${app.client-origin}")
 public class OrderController {
 
     private final OrderService orderService;

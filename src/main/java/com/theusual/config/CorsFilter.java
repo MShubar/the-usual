@@ -13,7 +13,7 @@ import java.io.IOException;
 @Order(1)
 public class CorsFilter implements Filter {
 
-    @Value("${CLIENT_ORIGIN:https://witty-grass-0ce71830f.1.azurestaticapps.net}")
+    @Value("${CLIENT_ORIGIN:http://localhost:5173}")
     private String clientOrigin;
 
     @Override

@@ -3,7 +3,6 @@ package com.theusual.services;
 import com.theusual.models.Category;
 import com.theusual.models.Product;
 import com.theusual.models.Subcategory;
-import com.theusual.repositories.CategoryRepository;
 import com.theusual.repositories.ProductRepository;
 import com.theusual.repositories.SubCategoryRepository;
 import lombok.RequiredArgsConstructor;
