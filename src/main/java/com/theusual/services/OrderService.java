@@ -49,6 +49,7 @@ public class OrderService {
     }
 
     public List<Order> getOrdersByUserId(String userId) {
+        System.out.println("OrderService: Get orders for user " + userId);
         return orderRepository.findByUserId(userId);
     }
 
