@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,10 +32,18 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrderById(id));
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping(value = "/user/{userId}", produces = "application/json")
     public ResponseEntity<List<Order>> getUserOrders(@PathVariable String userId) {
-        System.out.println("OrderService: Get orders for user " + userId);
-        return ResponseEntity.ok(orderService.getOrdersByUserId(userId));
+        try {
+            // Decode URL-encoded characters (e.g., %2B -> +)
+            String decodedUserId = URLDecoder.decode(userId, StandardCharsets.UTF_8);
+            System.out.println("OrderService: Get orders for user " + decodedUserId);
+            return ResponseEntity.ok(orderService.getOrdersByUserId(decodedUserId));
+        } catch (Exception e) {
+            System.err.println("Error decoding userId: " + e.getMessage());
+            // Fall back to original userId if decoding fails
+            return ResponseEntity.ok(orderService.getOrdersByUserId(userId));
+        }
     }
 
     @PutMapping("/{id}/cancel")
