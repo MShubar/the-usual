@@ -4,9 +4,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @EnableCaching
+@ComponentScan(basePackages = {"com.theusual.controllers", "com.theusual.services", "com.theusual.repositories", "com.theusual.config"})
 public class TheusualApplication {
 
     public static void main(String[] args) {
