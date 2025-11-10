@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,8 +32,24 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrderById(id));
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping(value = "/user/{userId}", produces = "application/json")
     public ResponseEntity<List<Order>> getUserOrders(@PathVariable String userId) {
+        try {
+            // Decode the userId to handle %2B -> +
+            String decodedUserId = URLDecoder.decode(userId, StandardCharsets.UTF_8);
+            System.out.println("Original userId: " + userId);
+            System.out.println("Decoded userId: " + decodedUserId);
+            return ResponseEntity.ok(orderService.getOrdersByUserId(decodedUserId));
+        } catch (Exception e) {
+            System.err.println("Error processing userId: " + e.getMessage());
+            return ResponseEntity.ok(orderService.getOrdersByUserId(userId));
+        }
+    }
+
+    // Add alternative endpoint using query parameter (more reliable for special characters)
+    @GetMapping(value = "/user", produces = "application/json")
+    public ResponseEntity<List<Order>> getUserOrdersByQuery(@RequestParam String userId) {
+        System.out.println("Query param userId: " + userId);
         return ResponseEntity.ok(orderService.getOrdersByUserId(userId));
     }
 
