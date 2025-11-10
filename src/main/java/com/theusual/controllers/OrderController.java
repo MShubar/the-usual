@@ -32,6 +32,14 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrderById(id));
     }
 
+    // POST endpoint for fetching orders (more reliable in Azure)
+    @PostMapping(value = "/user/fetch", produces = "application/json")
+    public ResponseEntity<List<Order>> fetchUserOrders(@RequestBody Map<String, String> request) {
+        String userId = request.get("userId");
+        System.out.println("POST fetch orders for userId: " + userId);
+        return ResponseEntity.ok(orderService.getOrdersByUserId(userId));
+    }
+
     @GetMapping(value = "/user/{userId}", produces = "application/json")
     public ResponseEntity<List<Order>> getUserOrders(@PathVariable String userId) {
         try {
